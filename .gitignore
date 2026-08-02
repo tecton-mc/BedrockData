@@ -1,0 +1,15 @@
+# Zig build outputs
+zig-out/
+.zig-cache/
+zig-cache/
+
+# Installed BDS and generated data
+server/
+dump/
+
+# Downloaded artifacts
+*.zip
+*.exe
+
+# OS / editor
+.DS_Store
