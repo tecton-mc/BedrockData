@@ -1,9 +1,11 @@
 const std = @import("std");
 const Io = std.Io;
-const cli = @import("cli.zig");
-const http = @import("http.zig");
+
 const bds = @import("bds.zig");
+const cli = @import("cli.zig");
 const dump = @import("dump.zig");
+const http = @import("http.zig");
+const r12 = @import("r12.zig");
 
 pub fn main(init: std.process.Init) !void {
     const allocator = init.arena.allocator();
@@ -116,4 +118,6 @@ pub fn main(init: std.process.Init) !void {
 
     try dump.writeDumps(allocator, io, dump_path, &data, addon_parsed.value);
     std.debug.print("Done! Data dumped to {s}/\n", .{dump_path});
+
+    try r12.run(allocator, io, cwd, dump_path, data.block_states, data.block_types, data.permutations);
 }

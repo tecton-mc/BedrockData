@@ -3,10 +3,20 @@
     .version = "0.1.0",
     .fingerprint = 0xc6e1c5687d6941b,
     .minimum_zig_version = "0.16.0",
-    .dependencies = .{},
+    .dependencies = .{
+        .BinaryStream = .{
+            .url = "git+https://github.com/VantStudios/BinaryStream?ref=master#b86fa752f49db4472d1480aeb0c8cc83462d8b39",
+            .hash = "BinaryStream-0.0.0-gn8mmnJZAQAnFC-kkrSOzigRqEgMsHddZlmmGELc0jAv",
+        },
+        .nbt = .{
+            .url = "git+https://github.com/VantStudios/Nbt.git#dbd31d6265cd0dcc6e659822ec2cedd72613c0e8",
+            .hash = "nbt-0.0.0-lsUufBrRAADisGBZm4XFayu1qBm1yBV_OQA7ffTtUwod",
+        },
+    },
     .paths = .{
         "build.zig",
         "build.zig.zon",
         "src",
+        "r12_to_current_block_map.bin",
     },
 }
