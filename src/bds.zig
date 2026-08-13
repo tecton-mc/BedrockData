@@ -23,7 +23,7 @@ pub fn killStaleBds(io: Io) void {
     if (std.process.spawn(io, .{ .argv = if (builtin.os.tag == .windows)
         &.{ "taskkill", "/F", "/IM", "bedrock_server.exe" }
     else
-        &.{ "pkill", "-x", "bedrock_server" } })) |pk_result| {
+        &.{ "pkill", "-x", "bedrock_server" }, .stderr = .ignore })) |pk_result| {
         var pk_child = pk_result;
         _ = pk_child.wait(io) catch {};
     } else |_| {}

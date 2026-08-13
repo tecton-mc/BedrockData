@@ -17,7 +17,7 @@ pub fn main(init: std.process.Init) !void {
         return;
     }
 
-    const cwd = init.environ_map.get("PWD") orelse ".";
+    const cwd = try std.process.currentPathAlloc(io, allocator);
     const server_path = try std.fs.path.join(allocator, &.{ cwd, "server" });
     const dump_base_path = try std.fs.path.join(allocator, &.{ cwd, "dump" });
     const template_path = try std.fs.path.join(allocator, &.{ cwd, "template" });
