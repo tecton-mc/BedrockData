@@ -85,3 +85,18 @@ In `dump/<version>/`:
 | `block_permutations.json` | Every block state permutation with its FNV-1a hash   |
 | `item_types.json`         | Item types                                           |
 | `entity_types.json`       | Entity types                                         |
+| `r12_to_current_block_map.bin` | Enriched legacy block map with current states      |
+| `r12_warnings.json`       | Entries skipped during r12 enrichment               |
+
+### r12 block map enrichment
+
+The last step of every run enriches the PMMP legacy block map against the
+target version's block states and permutations: missing state defaults are
+injected, every entry is validated by its FNV-1a hash, and the result is
+written to `dump/<version>/r12_to_current_block_map.bin`.
+
+This step depends on a base `r12_to_current_block_map.bin` placed in the
+project root. It is **not** generated from scratch per version: if the base
+file is missing the step is skipped (`r12: skipping (cannot read ...)`) and no
+r12 output is produced for that version. Existing dumps generated before this
+step was added do not contain r12 files.
