@@ -23,7 +23,8 @@ pub fn killStaleBds(io: Io) void {
     if (std.process.spawn(io, .{ .argv = if (builtin.os.tag == .windows)
         &.{ "taskkill", "/F", "/IM", "bedrock_server.exe" }
     else
-        &.{ "pkill", "-x", "bedrock_server" }, .stderr = .ignore })) |pk_result| {
+        &.{ "pkill", "-x", "bedrock_server" }, .stderr = .ignore })) |pk_result|
+    {
         var pk_child = pk_result;
         _ = pk_child.wait(io) catch {};
     } else |_| {}
@@ -40,11 +41,10 @@ pub fn downloadBds(allocator: std.mem.Allocator, io: Io, server_path: []const u8
         platform_str;
 
     const version_url = try std.fmt.allocPrint(allocator, "https://raw.githubusercontent.com/Bedrock-OSS/BDS-Versions/main/{s}/{s}.json", .{ platform_dir, target.version });
-
     const version_json = try http.runCurl(allocator, io, version_url);
+
     const vparsed = try std.json.parseFromSlice(struct { download_url: []const u8 }, allocator, version_json, .{ .ignore_unknown_fields = true });
     defer vparsed.deinit();
-
     const download_url = vparsed.value.download_url;
 
     // Clear the server dir so stale packs from a previously installed BDS

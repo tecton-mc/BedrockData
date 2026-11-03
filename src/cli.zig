@@ -56,6 +56,37 @@ fn printHelp() void {
     , .{});
 }
 
+// pub fn isValidVersion(allocator: std.mem.Allocator, io: Io, target: TargetVersion) !bool {
+//     const platform_str: []const u8 = if (builtin.os.tag == .linux) "linux" else "windows";
+//
+//     const body = try http.runCurl(allocator, io, BDS_VERSIONS_URL);
+//     const parsed = try std.json.parseFromSlice(std.json.Value, allocator, body, .{});
+//     defer parsed.deinit();
+//
+//     const root = parsed.value;
+//     const platform = root.object.get(platform_str).?.object;
+//
+//     var valid = false;
+//
+//     if (platform.get("versions")) |vers| {
+//         for (vers.array.items) |v| {
+//             if (std.mem.eql(u8, target.version, v.string)) {
+//                 valid = true;
+//             }
+//         }
+//     }
+//
+//     if (platform.get("preview_versions")) |vers| {
+//         for (vers.array.items) |v| {
+//             if (std.mem.eql(u8, target.version, v.string)) {
+//                 valid = true;
+//             }
+//         }
+//     }
+//
+//     return valid;
+// }
+
 pub fn listVersions(allocator: std.mem.Allocator, io: Io) !void {
     const platform_str: []const u8 = if (builtin.os.tag == .linux) "linux" else "windows";
 
@@ -98,6 +129,24 @@ pub fn resolveTargetVersion(allocator: std.mem.Allocator, io: Io, opts: CliOptio
     const root = parsed.value;
     const platform = root.object.get(platform_str).?.object;
 
+    var valid = false;
+
+    if (platform.get("versions")) |vers| {
+        for (vers.array.items) |v| {
+            if (opts.version) |ver| {
+                if (std.mem.eql(u8, ver, v.string)) valid = true;
+            }
+        }
+    }
+
+    if (platform.get("preview_versions")) |vers| {
+        for (vers.array.items) |v| {
+            if (opts.version) |ver| {
+                if (std.mem.eql(u8, ver, v.string)) valid = true;
+            }
+        }
+    }
+
     const target_version = if (opts.version) |ver| blk: {
         std.debug.print("Requested version: {s}\n", .{ver});
         break :blk ver;
@@ -117,6 +166,11 @@ pub fn resolveTargetVersion(allocator: std.mem.Allocator, io: Io, opts: CliOptio
             if (std.mem.eql(u8, v.string, target_version)) break :blk true;
         }
         break :blk false;
+    };
+
+    _ = if (!valid) {
+        std.debug.print("Invalid version({s}), use -l to see available versions \n", .{target_version});
+        std.process.exit(1);
     };
 
     return .{ .version = target_version, .is_preview = is_preview };
