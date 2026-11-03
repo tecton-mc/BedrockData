@@ -137,10 +137,10 @@ pub fn resolveTargetVersion(allocator: std.mem.Allocator, io: Io, opts: CliOptio
         break :blk false;
     };
 
-    _ = if (!valid) {
+    if (!valid) {
         std.debug.print("Invalid version({s}), use -l to see available versions \n", .{target_version});
         std.process.exit(1);
-    };
+    }
 
     return .{ .version = target_version, .is_preview = is_preview };
 }
